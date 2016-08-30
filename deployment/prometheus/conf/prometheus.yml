@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 15s
+
+  external_labels:
+    monitor: 'codelab-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    target_groups:
+      - targets: ['localhost:9090']
+
+  - job_name: 'secure-module'
+    scrape_interval: 5s
+    target_groups:
+      - targets: ['192.168.99.1:27070']
+
+  - job_name: 'ota-gateway'
+    scrape_interval: 5s
+    target_groups:
+      - targets: ['192.168.99.1:28080']
+

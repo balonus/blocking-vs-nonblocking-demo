@@ -14,10 +14,9 @@ public class SecureModuleBootstrap {
     public static void main(String[] args) throws Exception {
 
         DefaultExports.initialize();
-        startServer(7000, new ServletHolder(new MetricsServlet()));
+        startServer(27070, new ServletHolder(new MetricsServlet()));
 
         startRestServer(7070, SecureModuleResource.class);
-
     }
 
     private static Server startRestServer(int port, Class<? extends Application> restApplicationClass) throws Exception {
@@ -27,8 +26,8 @@ public class SecureModuleBootstrap {
     }
 
     private static Server startServer(int port, ServletHolder sh) throws Exception {
-        Server server = new Server(port);
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        final Server server = new Server(port);
+        final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.setContextPath("/");
         context.addServlet(sh, "/*");
         server.setHandler(context);

@@ -3,7 +3,7 @@
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{ISO8601,UTC} [%t] %-5p %c - %m%n</pattern>
+            <pattern>%d{ISO8601,UTC} [%highlight(%-5level)] %magenta(%thread) %green(%logger{16}) - %msg%n</pattern>
         </encoder>
     </appender>
 

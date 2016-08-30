@@ -14,14 +14,13 @@ import javax.ws.rs.core.Application;
 public class OTAGatewayBootstrap {
 
     public static void main(String[] args) throws Exception {
+
         DefaultExports.initialize();
-        startServer(8000, new ServletHolder(new MetricsServlet()));
+        startServer(28080, new ServletHolder(new MetricsServlet()));
 
         startRestServer(8080, ScriptSubmitionResource.class);
         startRestServer(8181, ScriptPollingResource.class);
-
     }
-
 
     private static Server startRestServer(int port, Class<? extends Application> restApplicationClass) throws Exception {
         ServletHolder h = new ServletHolder(new HttpServletDispatcher());
@@ -30,8 +29,8 @@ public class OTAGatewayBootstrap {
     }
 
     private static Server startServer(int port, ServletHolder sh) throws Exception {
-        Server server = new Server(port);
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        final Server server = new Server(port);
+        final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.setContextPath("/");
         context.addServlet(sh, "/*");
         server.setHandler(context);

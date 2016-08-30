@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-    	      <pattern>%d{ISO8601,UTC} [%t] %-5p %c - %m%n</pattern>
-		</encoder>
-	</appender>
-	
-	<logger name="org.demo" level="DEBUG" />
-	
-	<root level="INFO">
-		<appender-ref ref="stdout" />
-	</root>
-	
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601,UTC} [%t] %-5p %c - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.demo" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="stdout"/>
+    </root>
+
 </configuration>

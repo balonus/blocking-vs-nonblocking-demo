@@ -38,7 +38,6 @@ public class ScriptSubmitionResource extends Application {
         log.debug("Processing {} scripts submission for seId: {}", scripts.size(), seId);
 
         encryptAndStoreAllScripts(seId, scripts)
-        .thenCompose(ignore -> scriptStorageClient.numberOfScriptsForSe(seId))
         .thenAccept(asyncResponse::resume)
         .whenComplete((numberOfScripts, e) -> {
             if (e != null) {
@@ -49,7 +48,7 @@ public class ScriptSubmitionResource extends Application {
         });
     }
 
-    private CompletionStage<Void> encryptAndStoreSingleScript(final String seId, final Script script) {
+    private CompletionStage<Long> encryptAndStoreSingleScript(final String seId, final Script script) {
         return
         secureModuleClient
         .encrypt(seId, script.getPayload())
@@ -58,22 +57,22 @@ public class ScriptSubmitionResource extends Application {
         );
     }
 
-    private CompletionStage<Void> encryptAndStoreAllScripts(final String seId, final List<Script> scripts) {
+    private CompletionStage<Long> encryptAndStoreAllScripts(final String seId, final List<Script> scripts) {
         return encryptAndStoreAllScripts(seId, scripts, 0, null);
     }
 
-    private CompletionStage<Void> encryptAndStoreAllScripts(
+    private CompletionStage<Long> encryptAndStoreAllScripts(
             final String seId,
             final List<Script> scripts,
             int index,
-            CompletionStage<Void> previousStage
+            CompletionStage<Long> previousStage
     ) {
         if (index >= scripts.size()) {
             return previousStage;
         } else {
 
             final Script script = scripts.get(index);
-            final CompletionStage<Void> stage;
+            final CompletionStage<Long> stage;
 
             if (previousStage == null) {
                 stage = encryptAndStoreSingleScript(seId, script);

@@ -27,7 +27,10 @@ public class SecureModuleClient {
             throw new RuntimeException(e);
         }
 
-        HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(new PoolingHttpClientConnectionManager()).build();
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+        connManager.setDefaultMaxPerRoute(2000); // TODO should be parametrized
+        connManager.setMaxTotal(4000); // TODO should be parametrized
+		HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(connManager).build();
         client = new ResteasyClientBuilder().httpEngine(new ApacheHttpClient4Engine(httpClient)).build();
 
     }

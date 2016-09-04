@@ -11,3 +11,5 @@ tmp/
 .idea/
 *.iws
 **/*.iml
+
+.cache-tests

@@ -23,7 +23,7 @@ public class App
     }
 
     private static Server startRestServer(int port, Class<? extends Application> restApplicationClass) throws Exception {
-        ServletHolder h = new ServletHolder(new HttpServletDispatcher());
+        ServletHolder h = new ServletHolder(new HttpServletDispatcher()); // TODO HttpServlet30Dispatcher ???
         h.setInitParameter("javax.ws.rs.Application", restApplicationClass.getName());
         return startServer(port, h);
     }

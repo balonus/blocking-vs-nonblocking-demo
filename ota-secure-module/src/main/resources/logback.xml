@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{ISO8601,UTC} [%highlight(%-5level)] %magenta(%thread) %green(%logger{16}) - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="org.demo" level="DEBUG"/>
+    <appender name="console-async" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>256</queueSize>
+        <discardingThreshold>-50</discardingThreshold>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="console"/>
+    </appender>
+
+
+    <logger name="org.demo" level="INFO"/>
 
     <root level="INFO">
-        <appender-ref ref="stdout"/>
+        <appender-ref ref="console-async"/>
     </root>
 
 </configuration>

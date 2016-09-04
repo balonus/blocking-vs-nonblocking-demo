@@ -3,6 +3,8 @@
 .project
 .classpath
 .metadata
+.settings
+target/
 bin/
 tmp/
 

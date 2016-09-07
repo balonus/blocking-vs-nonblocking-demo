@@ -1,8 +1,8 @@
-package org.demo.ota.rest;
+package org.demo.ota.blocking.rest;
 
-import org.demo.ota.model.Script;
-import org.demo.ota.security.client.SecureModuleClient;
-import org.demo.ota.storage.ScriptStorageClient;
+import org.demo.ota.blocking.model.Script;
+import org.demo.ota.blocking.security.client.SecureModuleClient;
+import org.demo.ota.blocking.storage.ScriptStorageClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

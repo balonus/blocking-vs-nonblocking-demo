@@ -1,4 +1,4 @@
-package org.demo.ota.model;
+package org.demo.ota.blocking.model;
 
 public class Script {
 

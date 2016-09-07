@@ -12,6 +12,8 @@ public class SecureModuleClient {
 
     private static final SecureModuleClient INSTANCE = new SecureModuleClient();
 
+    private final AsyncHttpClient client = new DefaultAsyncHttpClient();
+
     private SecureModuleClient() {
     }
 
@@ -20,8 +22,6 @@ public class SecureModuleClient {
     }
 
     public CompletionStage<String> encrypt(String keyDiversifier, String payload) {
-
-        final AsyncHttpClient client = new DefaultAsyncHttpClient();
 
         return client
         .preparePost(BASE_URI + "/" + keyDiversifier)

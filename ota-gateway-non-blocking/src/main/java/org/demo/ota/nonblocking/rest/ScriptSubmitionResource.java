@@ -38,12 +38,17 @@ public class ScriptSubmitionResource extends Application {
         log.debug("Processing {} scripts submission for seId: {}", scripts.size(), seId);
 
         encryptAndStoreAllScripts(seId, scripts)
-        .thenAccept(asyncResponse::resume)
         .whenComplete((numberOfScripts, e) -> {
             if (e != null) {
                 asyncResponse.resume(e);
             } else {
                 log.debug("Request for seId={} processed", seId);
+//                asyncResponse.resume(
+//                        Response
+//                        .ok(numberOfScripts)
+//                        .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+//                        .build());
+                asyncResponse.resume(numberOfScripts);
             }
         });
     }

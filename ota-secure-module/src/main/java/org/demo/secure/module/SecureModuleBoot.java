@@ -9,7 +9,7 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 
 import javax.ws.rs.core.Application;
 
-public class SecureModuleBootstrap {
+public class SecureModuleBoot {
 
     public static void main(String[] args) throws Exception {
 

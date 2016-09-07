@@ -1,4 +1,4 @@
-package org.demo.ota.security.client;
+package org.demo.ota.blocking.security.client;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;

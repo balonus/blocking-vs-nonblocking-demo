@@ -1,5 +1,6 @@
 package org.demo.ota.nonblocking.rest;
 
+import org.demo.ota.nonblocking.model.Script;
 import org.demo.ota.nonblocking.storage.ScriptStorageClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,11 @@ public class ScriptPollingResource extends Application {
 
             return sOpt.get();
         })
-        .thenAccept(asyncResponse::resume)
-        .whenComplete((ignore, e) -> {
+        .whenComplete((script, e) -> {
             if (e != null) {
                 asyncResponse.resume(e);
+            } else {
+                asyncResponse.resume(new Script(script));
             }
         });
     }

@@ -1,6 +1,6 @@
-package org.demo.ota.storage;
+package org.demo.ota.blocking.storage;
 
-import org.demo.ota.model.Script;
+import org.demo.ota.blocking.model.Script;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 

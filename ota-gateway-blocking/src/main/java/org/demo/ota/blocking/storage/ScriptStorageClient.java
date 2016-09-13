@@ -15,7 +15,7 @@ public class ScriptStorageClient {
 
     private ScriptStorageClient() {
         try {
-            pool = new JedisPool(new URI(System.getProperty("redisUri", "redis://192.168.99.100:6379")));
+            pool = new JedisPool(new URI(System.getenv("REDIS_NODES")));
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

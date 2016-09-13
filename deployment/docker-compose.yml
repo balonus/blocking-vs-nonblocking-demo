@@ -1,0 +1,81 @@
+redis:
+  image: redis:3.0.5
+
+  expose:
+    - 6379
+
+  command: redis-server --appendonly no --save ""
+
+ota-secure-module:
+  image: goldobin/ota-secure-module:1.0.0-SNAPSHOT
+
+  ports:
+    - 7080
+
+  expose:
+    - 8080
+    - 28080
+
+ota-gateway-blocking:
+  image: goldobin/ota-gateway-blocking:1.0.0-SNAPSHOT
+
+  ports:
+    - 8080:8080
+    - 8081:8081
+
+  expose:
+    - 28080
+
+  environment:
+    REDIS_NODES: redis://redis:6379
+    SECURE_MODULE_URL: http://ota-secure-module:8080
+
+  links:
+    - redis
+    - ota-secure-module
+
+ota-gateway-non-blocking:
+  image: goldobin/ota-gateway-non-blocking:1.0.0-SNAPSHOT
+
+  ports:
+    - 9080:8080
+    - 9081:8081
+
+  expose:
+    - 28080
+
+  links:
+    - redis
+    - ota-secure-module
+  environment:
+    REDIS_NODES: redis://redis:6379
+    SECURE_MODULE_URL: http://ota-secure-module:8080
+
+prometheus:
+  image: prom/prometheus
+
+  ports:
+    - 9090:9090
+
+  expose:
+    - 9090
+
+  links:
+    - ota-gateway-blocking
+    - ota-gateway-non-blocking
+    - ota-secure-module
+
+  volumes:
+    - ./prometheus/conf/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+graphana:
+  image: grafana/grafana
+  links:
+    - prometheus
+
+  ports:
+    - 3000:3000
+
+  environment:
+    GF_SERVER_ROOT_URL: http://192.168.99.100:3000
+    GF_SECURITY_ADMIN_PASSWORD: secret

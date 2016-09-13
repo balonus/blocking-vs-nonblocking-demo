@@ -14,9 +14,9 @@ public class SecureModuleBoot {
     public static void main(String[] args) throws Exception {
 
         DefaultExports.initialize();
-        startServer(27070, new ServletHolder(new MetricsServlet()));
+        startServer(28080, new ServletHolder(new MetricsServlet()));
 
-        startRestServer(7070, SecureModuleResource.class);
+        startRestServer(8080, SecureModuleResource.class);
     }
 
     private static Server startRestServer(int port, Class<? extends Application> restApplicationClass) throws Exception {

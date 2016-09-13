@@ -19,7 +19,7 @@ public class NonblockingBoot
         startServer(28080, new ServletHolder(new MetricsServlet()));
 
         startRestServer(8080, ScriptSubmitionResource.class);
-        startRestServer(8181, ScriptPollingResource.class);
+        startRestServer(8081, ScriptPollingResource.class);
     }
 
     private static Server startRestServer(int port, Class<? extends Application> restApplicationClass) throws Exception {

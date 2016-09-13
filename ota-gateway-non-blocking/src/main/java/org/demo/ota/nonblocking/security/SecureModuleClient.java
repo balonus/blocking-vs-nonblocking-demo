@@ -8,7 +8,7 @@ import java.util.concurrent.CompletionStage;
 
 public class SecureModuleClient {
 
-    private static final String BASE_URI = "http://localhost:7070/secure-module/encrypt";
+    private static final String BASE_URI = System.getenv("SECURE_MODULE_URL") + "/secure-module/encrypt";
 
     private static final SecureModuleClient INSTANCE = new SecureModuleClient();
 

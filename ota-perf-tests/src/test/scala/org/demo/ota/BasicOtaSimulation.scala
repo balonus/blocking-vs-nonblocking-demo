@@ -20,13 +20,13 @@ class BasicOtaSimulation extends Simulation {
 
   val submit =
     exec(http("submit_request")
-      .post("http://localhost:8080/se/${seId}/scripts")
+      .post("http://192.168.99.100:8080/se/${seId}/scripts")
       .header("Content-Type", "application/json")
       .body(StringBody("""[{"payload":"${script1}"},{"payload":"${script2}"}]""")))
 
   val poll = repeat(2) {
     exec(http("poll_request")
-      .get("http://localhost:8181/se/${seId}/next-script"))
+      .get("http://192.168.99.100:8081/se/${seId}/next-script"))
   }
 
   val scn = scenario("OTA scenario").feed(feeder).exec(submit)

@@ -14,7 +14,7 @@ public class ScriptStorageClient {
     private final RedisAsyncCommands<String, String> commands;
 
     private ScriptStorageClient() {
-        commands = RedisClient.create("redis://192.168.99.100:6379").connect().async();
+        commands = RedisClient.create(System.getenv("REDIS_NODES")).connect().async();
     }
 
     public static ScriptStorageClient instance() {

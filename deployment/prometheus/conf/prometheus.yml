@@ -13,10 +13,14 @@ scrape_configs:
   - job_name: 'secure-module'
     scrape_interval: 5s
     target_groups:
-      - targets: ['192.168.99.1:27070']
+      - targets: ['ota-secure-module:28080']
 
-  - job_name: 'ota-gateway'
+  - job_name: 'ota-gateway-blocking'
     scrape_interval: 5s
     target_groups:
-      - targets: ['192.168.99.1:28080']
+      - targets: ['ota-gateway-blocking:28080']
 
+  - job_name: 'ota-gateway-non-blocking'
+    scrape_interval: 5s
+    target_groups:
+      - targets: ['ota-gateway-non-blocking:28080']

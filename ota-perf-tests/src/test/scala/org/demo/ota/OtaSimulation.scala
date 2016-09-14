@@ -6,7 +6,10 @@ import io.gatling.http.Predef._
 import scala.concurrent.duration._
 import scala.util.Random
 
-class BasicOtaSimulation extends Simulation {
+abstract class OtaSimulation extends Simulation {
+  def submissionUrl: String
+  def pollUrl: String
+
 
   def randomScript() = Random.alphanumeric.take(100 + Random.nextInt(900)).mkString
 
@@ -18,15 +21,18 @@ class BasicOtaSimulation extends Simulation {
     )
   )
 
+  val fullSubmissionUrl: String = submissionUrl + "/se/${seId}/scripts"
+  val fullPollUrl: String = pollUrl + "/se/${seId}/next-script"
+
   val submit =
     exec(http("submit_request")
-      .post("http://192.168.99.100:8080/se/${seId}/scripts")
+      .post(fullSubmissionUrl)
       .header("Content-Type", "application/json")
       .body(StringBody("""[{"payload":"${script1}"},{"payload":"${script2}"}]""")))
 
   val poll = repeat(2) {
     exec(http("poll_request")
-      .get("http://192.168.99.100:8081/se/${seId}/next-script"))
+      .get(fullPollUrl))
   }
 
   val scn = scenario("OTA scenario").feed(feeder).exec(submit)
@@ -47,4 +53,14 @@ class BasicOtaSimulation extends Simulation {
     //      constantUsersPerSec(4000) during 20.seconds
   ).protocols(httpConf))
 
+}
+
+class BlockingOtaSimulation extends OtaSimulation {
+  override def submissionUrl: String = "http://192.168.99.100:8080"
+  override def pollUrl: String = "http://192.168.99.100:8081"
+}
+
+class NonBlockingOtaSimulation extends OtaSimulation {
+  override def submissionUrl: String = "http://192.168.99.100:9080"
+  override def pollUrl: String = "http://192.168.99.100:9081"
 }

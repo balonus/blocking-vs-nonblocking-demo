@@ -43,11 +43,6 @@ public class ScriptSubmitionResource extends Application {
                 asyncResponse.resume(e);
             } else {
                 log.debug("Request for seId={} processed", seId);
-//                asyncResponse.resume(
-//                        Response
-//                        .ok(numberOfScripts)
-//                        .header(HttpHeaders.CONTENT_TYPE, "text/plain")
-//                        .build());
                 asyncResponse.resume(numberOfScripts);
             }
         });
@@ -63,30 +58,16 @@ public class ScriptSubmitionResource extends Application {
     }
 
     private CompletionStage<Long> encryptAndStoreAllScripts(final String seId, final List<Script> scripts) {
-        return encryptAndStoreAllScripts(seId, scripts, 0, null);
-    }
+        assert ! scripts.isEmpty();
 
-    private CompletionStage<Long> encryptAndStoreAllScripts(
-            final String seId,
-            final List<Script> scripts,
-            int index,
-            CompletionStage<Long> previousStage
-    ) {
-        if (index >= scripts.size()) {
-            return previousStage;
-        } else {
+        CompletionStage<Long> stage = encryptAndStoreSingleScript(seId, scripts.get(0));
 
-            final Script script = scripts.get(index);
-            final CompletionStage<Long> stage;
-
-            if (previousStage == null) {
-                stage = encryptAndStoreSingleScript(seId, script);
-            } else {
-                stage = previousStage.thenCompose(ignore -> encryptAndStoreSingleScript(seId, script));
-            }
-
-            return encryptAndStoreAllScripts(seId, scripts, index + 1, stage);
+        for (int i = 1; i < scripts.size(); i++) {
+            final Script script = scripts.get(i);
+            stage = stage.thenCompose(ignore -> encryptAndStoreSingleScript(seId, script));
         }
+
+        return stage;
     }
 
     @Override

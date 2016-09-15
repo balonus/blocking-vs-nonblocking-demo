@@ -7,20 +7,20 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     scrape_interval: 5s
-    target_groups:
-      - targets: ['localhost:9090']
+    static_configs:
+    - targets: ['localhost:9090']
 
   - job_name: 'secure-module'
     scrape_interval: 5s
-    target_groups:
+    static_configs:
       - targets: ['ota-secure-module:28080']
 
   - job_name: 'ota-gateway-blocking'
     scrape_interval: 5s
-    target_groups:
+    static_configs:
       - targets: ['ota-gateway-blocking:28080']
 
   - job_name: 'ota-gateway-non-blocking'
     scrape_interval: 5s
-    target_groups:
+    static_configs:
       - targets: ['ota-gateway-non-blocking:28080']

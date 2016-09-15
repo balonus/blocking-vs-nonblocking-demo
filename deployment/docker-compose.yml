@@ -1,5 +1,5 @@
 redis:
-  image: redis:3.0.5
+  image: redis:3.0.7
 
   expose:
     - 6379
@@ -52,7 +52,7 @@ ota-gateway-non-blocking:
     SECURE_MODULE_URL: http://ota-secure-module:8080
 
 prometheus:
-  image: prom/prometheus
+  image: prom/prometheus:v1.1.2
 
   ports:
     - 9090:9090
@@ -69,7 +69,7 @@ prometheus:
     - ./prometheus/conf/prometheus.yml:/etc/prometheus/prometheus.yml:ro
 
 graphana:
-  image: grafana/grafana
+  image: grafana/grafana:3.1.1
   links:
     - prometheus
 

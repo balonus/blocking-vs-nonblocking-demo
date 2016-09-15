@@ -1,5 +1,6 @@
 package org.demo.ota.blocking.rest;
 
+import org.demo.ota.blocking.ResourceMetrics;
 import org.demo.ota.blocking.model.Script;
 import org.demo.ota.blocking.storage.ScriptStorageClient;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import java.util.Set;
 public class ScriptPollingResource extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(ScriptPollingResource.class);
+    private static final ResourceMetrics METRICS = new ResourceMetrics("ota_polling");
 
     private ScriptStorageClient scriptStorageClient = ScriptStorageClient.instance();
 
@@ -26,19 +28,19 @@ public class ScriptPollingResource extends Application {
     @Path("/{seId}/next-script")
     @Produces(MediaType.APPLICATION_JSON)
     public Script getNextScript(@PathParam("seId") String seId) {
+        return METRICS.instrument(() -> {
+            log.debug("Looking for next script for seId: {}", seId);
 
-        log.debug("Looking for next script for seId: {}", seId);
+            Script nextScript = scriptStorageClient.nextScript(seId);
 
-        Script nextScript = scriptStorageClient.nextScript(seId);
+            log.debug("Returning next script: {} for seId: {}", nextScript, seId);
 
-        log.debug("Returning next script: {} for seId: {}", nextScript, seId);
-
-        return nextScript;
+            return nextScript;
+        });
     }
 
     @Override
     public Set<Object> getSingletons() {
         return new HashSet<>(Collections.singletonList(this));
     }
-
 }

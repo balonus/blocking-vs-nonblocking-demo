@@ -3,7 +3,7 @@ package org.demo.ota.blocking;
 import io.prometheus.client.exporter.MetricsServlet;
 import io.prometheus.client.hotspot.DefaultExports;
 import org.demo.ota.blocking.rest.ScriptPollingResource;
-import org.demo.ota.blocking.rest.ScriptSubmitionResource;
+import org.demo.ota.blocking.rest.ScriptSubmissionResource;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -20,7 +20,7 @@ public class BlockingBoot {
         DefaultExports.initialize();
         startServer(28080, new ServletHolder(new MetricsServlet()));
 
-        startRestServer(8080, ScriptSubmitionResource.class);
+        startRestServer(8080, ScriptSubmissionResource.class);
         startRestServer(8081, ScriptPollingResource.class);
     }
 

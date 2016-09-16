@@ -5,13 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.demo.ota</groupId>
-        <artifactId>ota</artifactId>
+        <artifactId>ota-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>ota-secure-module</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>ota-secure-module</name>
-    <packaging>jar</packaging>
 
     <properties>
         <run.main-class>org.demo.secure.module.SecureModuleBoot</run.main-class>

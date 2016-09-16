@@ -1,6 +1,6 @@
 package org.demo.ota.blocking.rest;
 
-import org.demo.ota.blocking.ResourceMetrics;
+import org.demo.ota.common.ResourceMetrics;
 import org.demo.ota.blocking.model.Script;
 import org.demo.ota.blocking.storage.ScriptStorageClient;
 import org.slf4j.Logger;

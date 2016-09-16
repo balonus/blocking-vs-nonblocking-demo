@@ -1,8 +1,9 @@
-package org.demo.ota.blocking;
+package org.demo.ota.common;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Histogram;
 
+import java.util.concurrent.CompletionStage;
 import java.util.function.Supplier;
 
 public final class ResourceMetrics {
@@ -49,5 +50,24 @@ public final class ResourceMetrics {
         } finally {
             timer.observeDuration();
         }
+    }
+
+    public final <T> CompletionStage<T>  instrumentStage(Supplier<CompletionStage<T>> supplier) {
+        final Histogram.Timer timer = latency.startTimer();
+
+        receivedTotal.inc();
+
+        final CompletionStage<T> stage = supplier.get();
+
+        stage.whenComplete((ignore, e) -> {
+            timer.observeDuration();
+            if (e != null) {
+                processedTotal.labels("failure").inc();
+            } else {
+                processedTotal.labels("success").inc();
+            }
+        });
+
+        return stage;
     }
 }

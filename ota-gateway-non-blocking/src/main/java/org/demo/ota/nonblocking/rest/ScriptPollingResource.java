@@ -1,5 +1,6 @@
 package org.demo.ota.nonblocking.rest;
 
+import org.demo.ota.common.ResourceMetrics;
 import org.demo.ota.nonblocking.model.Script;
 import org.demo.ota.nonblocking.storage.ScriptStorageClient;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import java.util.Set;
 public class ScriptPollingResource extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(ScriptPollingResource.class);
+    private static final ResourceMetrics METRICS = new ResourceMetrics("ota_polling");
 
     private ScriptStorageClient scriptStorageClient = ScriptStorageClient.instance();
 
@@ -29,16 +31,18 @@ public class ScriptPollingResource extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public void getNextScript(@PathParam("seId") String seId, @Suspended AsyncResponse asyncResponse) {
 
-        log.debug("Looking for next script for seId: {}", seId);
+        METRICS.instrumentStage(() -> {
+            log.debug("Looking for next script for seId: {}", seId);
 
-        scriptStorageClient
-        .nextScript(seId)
-        .thenApply(sOpt -> {
-            if (! sOpt.isPresent()) {
-                throw new NotFoundException();
-            }
+            return scriptStorageClient
+            .nextScript(seId)
+            .thenApply(sOpt -> {
+                if (! sOpt.isPresent()) {
+                    throw new NotFoundException();
+                }
 
-            return sOpt.get();
+                return sOpt.get();
+            });
         })
         .whenComplete((script, e) -> {
             if (e != null) {

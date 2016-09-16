@@ -3,10 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.demo.ota</groupId>
-    <artifactId>ota</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>ota-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>ota-demo-parent</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>ota-gateway-common</module>
+        <module>ota-gateway-blocking</module>
+        <module>ota-gateway-non-blocking</module>
+        <module>ota-secure-module</module>
+        <module>ota-perf-tests</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -195,11 +202,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <modules>
-        <module>ota-gateway-blocking</module>
-        <module>ota-gateway-non-blocking</module>
-        <module>ota-secure-module</module>
-        <module>ota-perf-tests</module>
-    </modules>
 </project>

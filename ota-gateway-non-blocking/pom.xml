@@ -5,18 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.demo.ota</groupId>
-        <artifactId>ota</artifactId>
+        <artifactId>ota-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>ota-gateway-non-blocking</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>ota-gateway-non-blocking</name>
 
     <properties>
         <run.main-class>org.demo.ota.nonblocking.NonblockingBoot</run.main-class>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.demo.ota</groupId>
+            <artifactId>ota-gateway-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>

@@ -1,5 +1,6 @@
 package org.demo.ota.nonblocking.rest;
 
+import org.demo.ota.common.ResourceMetrics;
 import org.demo.ota.nonblocking.model.Script;
 import org.demo.ota.nonblocking.security.SecureModuleClient;
 import org.demo.ota.nonblocking.storage.ScriptStorageClient;
@@ -21,6 +22,7 @@ import java.util.concurrent.CompletionStage;
 public class ScriptSubmitionResource extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(ScriptSubmitionResource.class);
+    private static final ResourceMetrics METRICS = new ResourceMetrics("ota_submission");
 
     private SecureModuleClient secureModuleClient = SecureModuleClient.instance();
     private ScriptStorageClient scriptStorageClient = ScriptStorageClient.instance();
@@ -34,10 +36,10 @@ public class ScriptSubmitionResource extends Application {
             List<Script> scripts,
             @Suspended final AsyncResponse asyncResponse
     ) {
-
-        log.debug("Processing {} scripts submission for seId: {}", scripts.size(), seId);
-
-        encryptAndStoreAllScripts(seId, scripts)
+        METRICS.instrumentStage(() -> {
+            log.debug("Processing {} scripts submission for seId: {}", scripts.size(), seId);
+            return encryptAndStoreAllScripts(seId, scripts);
+        })
         .whenComplete((numberOfScripts, e) -> {
             if (e != null) {
                 asyncResponse.resume(e);

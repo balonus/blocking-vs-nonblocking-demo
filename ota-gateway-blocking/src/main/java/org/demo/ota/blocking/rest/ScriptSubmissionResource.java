@@ -1,6 +1,6 @@
 package org.demo.ota.blocking.rest;
 
-import org.demo.ota.blocking.ResourceMetrics;
+import org.demo.ota.common.ResourceMetrics;
 import org.demo.ota.blocking.model.Script;
 import org.demo.ota.blocking.security.client.SecureModuleClient;
 import org.demo.ota.blocking.storage.ScriptStorageClient;
@@ -29,7 +29,6 @@ public class ScriptSubmissionResource extends Application {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public long submitScripts(@PathParam("seId") String seId, List<Script> scripts) {
-
         return METRICS.instrument(() -> {
             log.debug("Processing {} scripts submission for seId: {}", scripts.size(), seId);
 

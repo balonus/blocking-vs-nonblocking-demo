@@ -48,5 +48,4 @@ public class BlockingBoot {
         server.start();
         return server;
     }
-
 }

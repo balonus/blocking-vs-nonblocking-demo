@@ -52,7 +52,7 @@ abstract class OtaSimulation extends Simulation {
     //      constantUsersPerSec(200) during 10.seconds,
     //      constantUsersPerSec(100) during 10.seconds,
     //      constantUsersPerSec(500) during 10.seconds,
-     constantUsersPerSec(500) during 30.seconds
+     constantUsersPerSec(1000) during 30.seconds
     //      constantUsersPerSec(4000) during 20.seconds
     //atOnceUsers(10000)
 //    rampUsersPerSec(10) to (1000) during 20.seconds,

@@ -20,9 +20,12 @@ public class NonblockingBoot extends BaseServerApp {
 
     @Override
     protected List<Server> createServers() {
+        final int submissionWorkerThreads = Integer.parseInt(System.getenv("OTA_SUBMISSION_MAX_WORKER_THREADS"));
+        final int pollWorkerThreads = Integer.parseInt(System.getenv("OTA_POLL_MAX_WORKER_THREADS"));
+
         return Arrays.asList(
-                createJettyServerForJaxRsApplication(8080, 200, new ScriptSubmissionResource()),
-                createJettyServerForJaxRsApplication(8081, 200, new ScriptPollingResource())
+                createJettyServerForJaxRsApplication(8080, submissionWorkerThreads, new ScriptSubmissionResource()),
+                createJettyServerForJaxRsApplication(8081, pollWorkerThreads, new ScriptPollingResource())
         );
     }
 }

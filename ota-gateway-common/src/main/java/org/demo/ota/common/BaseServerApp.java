@@ -105,9 +105,10 @@ public abstract class BaseServerApp implements Runnable {
         assert port > 0;
         assert workerThreads > 0;
 
-        final QueuedThreadPool thrPool = new QueuedThreadPool();
-        thrPool.setMaxThreads(workerThreads + 3);
-        final Server server = new Server(thrPool);
+        final QueuedThreadPool threadPool = new QueuedThreadPool(workerThreads + 3);
+        threadPool.setName("jetty-"+port);
+
+        final Server server = new Server(threadPool);
 
         final ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);

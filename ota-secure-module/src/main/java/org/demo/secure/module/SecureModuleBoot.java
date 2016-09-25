@@ -18,8 +18,14 @@ public class SecureModuleBoot extends BaseServerApp {
 
     @Override
     protected List<Server> createServers() {
+
+        final int workerThreads = Integer.parseInt(System.getenv("SM_MAX_WORKER_THREADS"));
+
         return Collections.singletonList(
-                createJettyServerForJaxRsApplication(8080, 4, new SecureModuleResource())
+                createJettyServerForJaxRsApplication(
+                        8080,
+                        workerThreads,
+                        new SecureModuleResource())
         );
     }
 }

@@ -38,7 +38,7 @@ abstract class OtaSimulation extends Simulation {
   val scn = scenario("OTA scenario")
     .feed(feeder)
     .exec(submit)
-    .exec(poll)
+//    .exec(poll)
 
   val httpConf = http.shareConnections
 
@@ -52,11 +52,11 @@ abstract class OtaSimulation extends Simulation {
     //      constantUsersPerSec(200) during 10.seconds,
     //      constantUsersPerSec(100) during 10.seconds,
     //      constantUsersPerSec(500) during 10.seconds,
-    // constantUsersPerSec(500) during 30.seconds
+     constantUsersPerSec(500) during 30.seconds
     //      constantUsersPerSec(4000) during 20.seconds
     //atOnceUsers(10000)
-    rampUsersPerSec(10) to (1000) during 20.seconds,
-    rampUsersPerSec(100) to (10) during 20.seconds
+//    rampUsersPerSec(10) to (1000) during 20.seconds,
+//    rampUsersPerSec(100) to (10) during 20.seconds
   ).protocols(httpConf))
 
 }

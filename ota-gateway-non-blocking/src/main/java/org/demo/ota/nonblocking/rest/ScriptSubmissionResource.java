@@ -19,9 +19,9 @@ import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
 @Path("se")
-public class ScriptSubmitionResource extends Application {
+public class ScriptSubmissionResource extends Application {
 
-    private static final Logger log = LoggerFactory.getLogger(ScriptSubmitionResource.class);
+    private static final Logger log = LoggerFactory.getLogger(ScriptSubmissionResource.class);
     private static final ResourceMetrics METRICS = new ResourceMetrics("ota_submission");
 
     private SecureModuleClient secureModuleClient = SecureModuleClient.instance();

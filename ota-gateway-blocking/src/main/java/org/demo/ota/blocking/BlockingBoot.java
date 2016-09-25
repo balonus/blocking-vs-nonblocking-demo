@@ -1,51 +1,29 @@
 package org.demo.ota.blocking;
 
-import io.prometheus.client.exporter.MetricsServlet;
-import io.prometheus.client.hotspot.DefaultExports;
 import org.demo.ota.blocking.rest.ScriptPollingResource;
 import org.demo.ota.blocking.rest.ScriptSubmissionResource;
+import org.demo.ota.common.BaseServerApp;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
 
-import javax.ws.rs.core.Application;
+import java.util.Arrays;
+import java.util.List;
 
-public class BlockingBoot {
-
+public class BlockingBoot extends BaseServerApp {
     public static void main(String[] args) throws Exception {
-
-        DefaultExports.initialize();
-        startServer(28080, new ServletHolder(new MetricsServlet()));
-
-        startRestServer(8080, ScriptSubmissionResource.class);
-        startRestServer(8081, ScriptPollingResource.class);
+        new BlockingBoot().run();
     }
 
-    private static Server startRestServer(int port, Class<? extends Application> restApplicationClass) throws Exception {
-        ServletHolder h = new ServletHolder(new HttpServletDispatcher());
-        h.setInitParameter("javax.ws.rs.Application", restApplicationClass.getName());
-        return startServer(port, h);
+    @Override
+    protected String title() {
+        return "Blocking OTA Gateway";
     }
 
-    private static Server startServer(int port, ServletHolder sh) throws Exception {
-
-        QueuedThreadPool thrPool = new QueuedThreadPool();
-        thrPool.setMaxThreads(1000); // TODO should be parametrized
-        final Server server = new Server(thrPool);
-
-        final ServerConnector connector = new ServerConnector(server);
-        connector.setPort(port);
-        server.addConnector(connector);
-
-        final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
-        context.setContextPath("/");
-        context.addServlet(sh, "/*");
-        server.setHandler(context);
-
-        server.start();
-        return server;
+    @Override
+    protected List<Server> createServers() {
+        return Arrays.asList(
+                createJettyServerForJaxRsApplication(8080, 1000, new ScriptSubmissionResource()),
+                createJettyServerForJaxRsApplication(8081, 1000, new ScriptPollingResource())
+        );
     }
 }
+

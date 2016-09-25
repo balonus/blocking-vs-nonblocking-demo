@@ -28,30 +28,37 @@ PARAMS=""
 
 if [ "${CAN_START}" = true ]; then
 
-java \
--server \
--Xms${JVM_HEAP_MEMORY_SIZE}m \
--Xmx${JVM_HEAP_MEMORY_SIZE}m \
--XX:MaxDirectMemorySize=${JVM_DIRECT_MEMORY_SIZE}M \
--XX:MaxMetaspaceSize=100m \
--XX:+UseParallelGC \
--XX:+DisableExplicitGC \
--XX:+UseStringDeduplication \
--XX:+AggressiveOpts \
--Dsun.rmi.dgc.client.gcInterval=3600000 \
--Dsun.rmi.dgc.server.gcInterval=3600000 \
--XX:OnOutOfMemoryError="kill -9 %p" \
--verbose:gc \
--XX:+PrintGCDetails \
--XX:+PrintGCTimeStamps \
--XX:+PrintGCDateStamps \
--XX:+PrintAdaptiveSizePolicy \
--XX:+PrintTenuringDistribution \
--XX:+PrintStringDeduplicationStatistics \
--Dio.netty.leakDetectionLevel=${NETTY_LEAK_DETECTION_LEVEL:-simple} \
-${PARAMS} \
--jar ${JAR}
-    exit 0
+    trap 'kill -TERM ${JAVA_PID}' TERM INT
+
+    java \
+    -server \
+    -Xms${JVM_HEAP_MEMORY_SIZE}m \
+    -Xmx${JVM_HEAP_MEMORY_SIZE}m \
+    -XX:MaxDirectMemorySize=${JVM_DIRECT_MEMORY_SIZE}M \
+    -XX:MaxMetaspaceSize=100m \
+    -XX:+UseParallelGC \
+    -XX:+DisableExplicitGC \
+    -XX:+UseStringDeduplication \
+    -XX:+AggressiveOpts \
+    -Dsun.rmi.dgc.client.gcInterval=3600000 \
+    -Dsun.rmi.dgc.server.gcInterval=3600000 \
+    -XX:OnOutOfMemoryError="kill -9 %p" \
+    -verbose:gc \
+    -XX:+PrintGCDetails \
+    -XX:+PrintGCTimeStamps \
+    -XX:+PrintGCDateStamps \
+    -XX:+PrintAdaptiveSizePolicy \
+    -XX:+PrintTenuringDistribution \
+    -XX:+PrintStringDeduplicationStatistics \
+    -Dio.netty.leakDetectionLevel=${NETTY_LEAK_DETECTION_LEVEL:-simple} \
+    ${PARAMS} \
+    -jar ${JAR} &
+
+    JAVA_PID=$!
+
+    wait ${JAVA_PID}
+    exit $?
+
 else
     echo -e "${LEVEL_ERROR} Some of mandatory environment variables variables was not specified. Exiting"
     exit 1

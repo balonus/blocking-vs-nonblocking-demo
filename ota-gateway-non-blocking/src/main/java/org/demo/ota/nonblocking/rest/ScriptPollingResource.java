@@ -15,7 +15,6 @@ import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 @Path("se")
@@ -55,7 +54,6 @@ public class ScriptPollingResource extends Application {
 
     @Override
     public Set<Object> getSingletons() {
-        return new HashSet<>(Collections.singletonList(this));
+        return Collections.singleton(this);
     }
-
 }

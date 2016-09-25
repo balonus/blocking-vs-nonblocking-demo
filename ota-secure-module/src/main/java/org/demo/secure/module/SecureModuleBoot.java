@@ -1,38 +1,25 @@
 package org.demo.secure.module;
 
-import io.prometheus.client.exporter.MetricsServlet;
-import io.prometheus.client.hotspot.DefaultExports;
+import org.demo.ota.common.BaseServerApp;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 
-import javax.ws.rs.core.Application;
+import java.util.Collections;
+import java.util.List;
 
-public class SecureModuleBoot {
-
+public class SecureModuleBoot extends BaseServerApp {
     public static void main(String[] args) throws Exception {
-
-        DefaultExports.initialize();
-        startServer(28080, new ServletHolder(new MetricsServlet()));
-
-        startRestServer(8080, SecureModuleResource.class);
+        new SecureModuleBoot().run();
     }
 
-    private static Server startRestServer(int port, Class<? extends Application> restApplicationClass) throws Exception {
-        ServletHolder h = new ServletHolder(new HttpServlet30Dispatcher());
-        h.setInitParameter("javax.ws.rs.Application", restApplicationClass.getName());
-        return startServer(port, h);
+    @Override
+    protected String title() {
+        return "Secure Module";
     }
 
-    private static Server startServer(int port, ServletHolder sh) throws Exception {
-        final Server server = new Server(port);
-        final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
-        context.setContextPath("/");
-        context.addServlet(sh, "/*");
-        server.setHandler(context);
-        server.start();
-        return server;
+    @Override
+    protected List<Server> createServers() {
+        return Collections.singletonList(
+                createJettyServerForJaxRsApplication(8080, 4, new SecureModuleResource())
+        );
     }
-
 }

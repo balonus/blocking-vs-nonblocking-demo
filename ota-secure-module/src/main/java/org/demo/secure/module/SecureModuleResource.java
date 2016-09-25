@@ -9,7 +9,6 @@ import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -26,7 +25,11 @@ public class SecureModuleResource extends Application {
     @Path("/encrypt/{keyDiversifier}")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
-    public void encrypt(@PathParam("keyDiversifier") String keyDiversifier, String payload, @Suspended final AsyncResponse asyncResponse) {
+    public void encrypt(
+            @PathParam("keyDiversifier") String keyDiversifier,
+            String payload,
+            @Suspended final AsyncResponse asyncResponse
+    ) {
 
         log.debug("div: {}, payload: {}", keyDiversifier, payload);
 
@@ -38,7 +41,7 @@ public class SecureModuleResource extends Application {
 
     @Override
     public Set<Object> getSingletons() {
-        return new HashSet<>(Collections.singletonList(this));
+        return Collections.singleton(this);
     }
 
 }

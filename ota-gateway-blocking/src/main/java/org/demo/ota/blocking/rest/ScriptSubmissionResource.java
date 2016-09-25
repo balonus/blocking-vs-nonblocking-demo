@@ -1,9 +1,9 @@
 package org.demo.ota.blocking.rest;
 
-import org.demo.ota.common.ResourceMetrics;
 import org.demo.ota.blocking.model.Script;
 import org.demo.ota.blocking.security.client.SecureModuleClient;
 import org.demo.ota.blocking.storage.ScriptStorageClient;
+import org.demo.ota.common.ResourceMetrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +50,6 @@ public class ScriptSubmissionResource extends Application {
 
     @Override
     public Set<Object> getSingletons() {
-        return new HashSet<>(Collections.singletonList(this));
+        return Collections.singleton(this);
     }
 }

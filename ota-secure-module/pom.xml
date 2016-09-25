@@ -18,6 +18,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.demo.ota</groupId>
+            <artifactId>ota-gateway-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
         </dependency>

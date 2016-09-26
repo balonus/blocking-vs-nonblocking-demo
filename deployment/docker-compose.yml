@@ -17,7 +17,7 @@ ota-secure-module:
     - 28080
 
   environment:
-    SM_MAX_WORKER_THREADS: 200
+    SM_MAX_WORKER_THREADS: 16
 
 ota-gateway-blocking:
   image: goldobin/ota-gateway-blocking:1.0.0-SNAPSHOT
@@ -57,8 +57,8 @@ ota-gateway-non-blocking:
     REDIS_NODES: redis://redis:6379
     SECURE_MODULE_URL: http://ota-secure-module:8080
     JVM_HEAP_MEMORY_SIZE: 512
-    OTA_SUBMISSION_MAX_WORKER_THREADS: 200
-    OTA_POLL_MAX_WORKER_THREADS: 200
+    OTA_SUBMISSION_MAX_WORKER_THREADS: 16
+    OTA_POLL_MAX_WORKER_THREADS: 16
 
 prometheus:
   image: prom/prometheus:v1.1.2

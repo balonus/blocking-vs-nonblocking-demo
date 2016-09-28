@@ -36,40 +36,59 @@ public class ScriptSubmissionResource extends Application {
             List<Script> scripts,
             @Suspended final AsyncResponse asyncResponse
     ) {
+        final LoggingContext loggingContext = new LoggingContext("submission", seId);
+
         METRICS.instrumentStage(() -> {
-            log.debug("Processing {} scripts submission for seId: {}", scripts.size(), seId);
-            return encryptAndStoreAllScripts(seId, scripts);
+            log.debug("{} Processing {} scripts submission", loggingContext, scripts.size());
+
+            CompletionStage<Long> stage = null; // <-- non final filed, potential concurrent access bug!
+
+            for (int i = 0; i < scripts.size(); i++) {
+                final int scriptIndex = i;
+                final Script script = scripts.get(scriptIndex);
+
+                if (stage == null) {
+                    stage = encryptAndStoreSingleScript(
+                            loggingContext,
+                            seId,
+                            scriptIndex,
+                            script);
+                } else {
+                    stage = stage.thenCompose(ignore -> encryptAndStoreSingleScript(
+                            loggingContext,
+                            seId,
+                            scriptIndex,
+                            script));
+                }
+            }
+
+            return stage;
         })
         .whenComplete((numberOfScripts, e) -> {
             if (e != null) {
                 asyncResponse.resume(e);
             } else {
-                log.debug("Request for seId={} processed", seId);
+                log.debug("{} Request processed", loggingContext);
                 asyncResponse.resume(numberOfScripts);
             }
         });
     }
 
-    private CompletionStage<Long> encryptAndStoreSingleScript(final String seId, final Script script) {
+    private CompletionStage<Long> encryptAndStoreSingleScript(
+        final LoggingContext loggingContext,
+        final String seId,
+        final int scriptIndex,
+        final Script script
+    ) {
+        log.debug("{} Encrypting script {}", loggingContext, scriptIndex);
+
         return
         secureModuleClient
         .encrypt(seId, script.getPayload())
-        .thenCompose(encryptedPayload ->
-            scriptStorageClient.storeScript(seId, new Script(encryptedPayload))
-        );
-    }
-
-    private CompletionStage<Long> encryptAndStoreAllScripts(final String seId, final List<Script> scripts) {
-        assert ! scripts.isEmpty();
-
-        CompletionStage<Long> stage = encryptAndStoreSingleScript(seId, scripts.get(0));
-
-        for (int i = 1; i < scripts.size(); i++) {
-            final Script script = scripts.get(i);
-            stage = stage.thenCompose(ignore -> encryptAndStoreSingleScript(seId, script));
-        }
-
-        return stage;
+        .thenCompose(encryptedPayload -> {
+            log.debug("{} Storing encrypted script {}", loggingContext, scriptIndex);
+            return scriptStorageClient.storeScript(seId, new Script(encryptedPayload));
+        });
     }
 
     @Override

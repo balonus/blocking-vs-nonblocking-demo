@@ -11,7 +11,7 @@
         <appender-ref ref="STDOUT"/>
     </appender>
 
-    <logger name="org.demo" level="INFO"/>
+    <logger name="org.demo" level="${LOG_LEVEL:-INFO}"/>
 
     <root level="INFO">
         <appender-ref ref="ASYNC-STDOUT"/>

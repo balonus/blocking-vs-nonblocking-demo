@@ -6,6 +6,7 @@ import org.demo.ota.blocking.storage.ScriptStorageClient;
 import org.demo.ota.common.ResourceMetrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
@@ -29,20 +30,28 @@ public class ScriptSubmissionResource extends Application {
     @Produces(MediaType.TEXT_PLAIN)
     public long submitScripts(@PathParam("seId") String seId, List<Script> scripts) {
         return METRICS.instrument(() -> {
-            log.debug("Processing {} scripts submission for seId: {}", scripts.size(), seId);
 
-            scripts.forEach((script) -> {
-                log.debug("Processing script submission - seId: {}, script: {}", seId, script);
+            MDC.put("flow", "submission");
+            MDC.put("se", seId);
+
+            log.debug("Processing {} scripts submission", scripts.size(), seId);
+
+            for (int i = 0; i < scripts.size(); i++) {
+
+                final Script script = scripts.get(i);
+
+                log.debug("Encrypting {} script", i);
 
                 String encryptedPayload = secureModuleClient.encrypt(seId, script.getPayload());
                 script.setPayload(encryptedPayload);
 
+                log.debug("Storing encrypted script {}", i);
                 scriptStorageClient.storeScript(seId, script);
-            });
+            }
 
             long numberOfScripts = scriptStorageClient.numberOfScriptsForSe(seId);
 
-            log.debug("Total number of scripts for seId: {} is {}", seId, numberOfScripts);
+            log.debug("Request processed", seId);
 
             return numberOfScripts;
         });

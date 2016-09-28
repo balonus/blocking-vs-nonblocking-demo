@@ -30,6 +30,7 @@ ota-gateway-blocking:
     - 28080
 
   environment:
+    LOG_LEVEL: DEBUG
     REDIS_NODES: redis://redis:6379
     SECURE_MODULE_URL: http://ota-secure-module:8080
     JVM_HEAP_MEMORY_SIZE: 512
@@ -54,6 +55,7 @@ ota-gateway-non-blocking:
     - redis
     - ota-secure-module
   environment:
+    LOG_LEVEL: DEBUG
     REDIS_NODES: redis://redis:6379
     SECURE_MODULE_URL: http://ota-secure-module:8080
     JVM_HEAP_MEMORY_SIZE: 512

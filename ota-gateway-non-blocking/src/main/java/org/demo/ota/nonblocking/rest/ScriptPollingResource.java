@@ -30,17 +30,21 @@ public class ScriptPollingResource extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public void getNextScript(@PathParam("seId") String seId, @Suspended AsyncResponse asyncResponse) {
 
+        final LoggingContext loggingContext = new LoggingContext("poll", seId);
+
         METRICS.instrumentStage(() -> {
-            log.debug("Looking for next script for seId: {}", seId);
+            log.debug("{} Looking for next script", loggingContext, seId);
 
             return scriptStorageClient
             .nextScript(seId)
-            .thenApply(sOpt -> {
-                if (! sOpt.isPresent()) {
+            .thenApply(s -> {
+                if (s.isPresent()) {
+                    log.debug("{} Script found. Responding back to card", loggingContext);
+                    return s.get();
+                } else {
+                    log.debug("{} Script not found", loggingContext);
                     throw new NotFoundException();
                 }
-
-                return sOpt.get();
             });
         })
         .whenComplete((script, e) -> {

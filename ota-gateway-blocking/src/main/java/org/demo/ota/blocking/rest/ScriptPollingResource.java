@@ -5,6 +5,7 @@ import org.demo.ota.blocking.storage.ScriptStorageClient;
 import org.demo.ota.common.ResourceMetrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,14 +28,22 @@ public class ScriptPollingResource extends Application {
     @Path("/{seId}/next-script")
     @Produces(MediaType.APPLICATION_JSON)
     public Script getNextScript(@PathParam("seId") String seId) {
+
+        MDC.put("flow", "poll");
+        MDC.put("se", seId);
+
         return METRICS.instrument(() -> {
-            log.debug("Looking for next script for seId: {}", seId);
+            log.debug("Looking for next script");
 
             Script nextScript = scriptStorageClient.nextScript(seId);
 
-            log.debug("Returning next script: {} for seId: {}", nextScript, seId);
-
-            return nextScript;
+            if (nextScript != null) {
+                log.debug("Script found. Responding back to card");
+                return nextScript;
+            } else {
+                log.debug("Script was not");
+                throw new NotFoundException();
+            }
         });
     }
 

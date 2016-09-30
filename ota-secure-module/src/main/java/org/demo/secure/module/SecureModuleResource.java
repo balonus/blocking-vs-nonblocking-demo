@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 @Path("secure-module")
 public class SecureModuleResource extends Application {
-
-
     private static final Logger log = LoggerFactory.getLogger(SecureModuleResource.class);
     private static final ScheduledExecutorService scheduledExecutor = new ScheduledThreadPoolExecutor(100);
 
@@ -30,18 +28,15 @@ public class SecureModuleResource extends Application {
             String payload,
             @Suspended final AsyncResponse asyncResponse
     ) {
-
         log.debug("div: {}, payload: {}", keyDiversifier, payload);
 
         scheduledExecutor.schedule(() -> {
             asyncResponse.resume("encrypted:" + keyDiversifier + ":" + payload.toUpperCase());
         }, 200, TimeUnit.MILLISECONDS); // TODO should be parametrized
-
     }
 
     @Override
     public Set<Object> getSingletons() {
         return Collections.singleton(this);
     }
-
 }

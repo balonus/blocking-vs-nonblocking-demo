@@ -6,8 +6,9 @@ import redis.clients.jedis.JedisPool;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
-public class ScriptStorageClient {
+public final class ScriptStorageClient {
 
     private static final ScriptStorageClient INSTANCE = new ScriptStorageClient();
 
@@ -37,11 +38,9 @@ public class ScriptStorageClient {
         }
     }
 
-    public Script nextScript(String seId) {
+    public Optional<Script> nextScript(String seId) {
         try (Jedis jedis = pool.getResource()) {
-            String payload = jedis.lpop(seId);
-            return (payload != null) ? new Script(payload) : null;
+            return Optional.ofNullable(jedis.lpop(seId)).map(Script::new);
         }
     }
-
 }

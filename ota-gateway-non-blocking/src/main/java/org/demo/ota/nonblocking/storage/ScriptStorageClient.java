@@ -7,7 +7,7 @@ import org.demo.ota.nonblocking.model.Script;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
-public class ScriptStorageClient {
+public final class ScriptStorageClient {
 
     private static final ScriptStorageClient INSTANCE = new ScriptStorageClient();
 
@@ -21,11 +21,16 @@ public class ScriptStorageClient {
         return INSTANCE;
     }
 
-    public CompletionStage<Long> storeScript(String seId, Script script) {
-        return commands.rpush(seId, script.getPayload());
+    public CompletionStage<Void> storeScript(String seId, Script script) {
+        return commands.rpush(seId, script.getPayload()).thenApply(ignore -> null);
     }
 
     public CompletionStage<Optional<String>> nextScript(String seId) {
         return commands.lpop(seId).thenApply(Optional::ofNullable);
     }
+
+    public CompletionStage<Long> numberOfScriptsForSe(String seId) {
+        return commands.llen(seId);
+    }
+
 }

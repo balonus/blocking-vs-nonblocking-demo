@@ -30,19 +30,19 @@ public class ScriptPollingResource extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public void getNextScript(@PathParam("seId") String seId, @Suspended AsyncResponse asyncResponse) {
 
-        final LoggingContext loggingContext = new LoggingContext("poll", seId);
+        final DiagnosticContext diagnosticContext = new DiagnosticContext("poll", seId);
 
         METRICS.instrumentStage(() -> {
-            log.debug("{} Looking for next script", loggingContext, seId);
+            log.debug("{} Looking for next script", diagnosticContext, seId);
 
             return scriptStorageClient
             .nextScript(seId)
             .thenApply(s -> {
                 if (s.isPresent()) {
-                    log.debug("{} Script found. Responding back to card", loggingContext);
+                    log.debug("{} Script found. Responding back to card", diagnosticContext);
                     return s.get();
                 } else {
-                    log.debug("{} Script not found", loggingContext);
+                    log.debug("{} Script not found", diagnosticContext);
                     throw new NotFoundException();
                 }
             });

@@ -29,20 +29,17 @@ public class ScriptSubmissionResource extends Application {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public long submitScripts(@PathParam("seId") String seId, List<Script> scripts) {
+        MDC.put("flow", "submission");
+        MDC.put("se", seId);
+
         return METRICS.instrument(() -> {
-
-            MDC.put("flow", "submission");
-            MDC.put("se", seId);
-
             log.debug("Processing {} scripts submission", scripts.size(), seId);
 
             for (int i = 0; i < scripts.size(); i++) {
-
                 final Script script = scripts.get(i);
 
                 log.debug("Encrypting {} script", i);
-
-                String encryptedPayload = secureModuleClient.encrypt(seId, script.getPayload());
+                final String encryptedPayload = secureModuleClient.encrypt(seId, script.getPayload());
                 script.setPayload(encryptedPayload);
 
                 log.debug("Storing encrypted script {}", i);
@@ -50,9 +47,7 @@ public class ScriptSubmissionResource extends Application {
             }
 
             long numberOfScripts = scriptStorageClient.numberOfScriptsForSe(seId);
-
             log.debug("Request processed", seId);
-
             return numberOfScripts;
         });
     }

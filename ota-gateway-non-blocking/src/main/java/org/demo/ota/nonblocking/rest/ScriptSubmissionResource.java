@@ -31,45 +31,70 @@ public class ScriptSubmissionResource extends Application {
     @Path("/{seId}/scripts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public void submitScripts(@PathParam("seId") String seId, List<Script> scripts, @Suspended final AsyncResponse asyncResponse) {
-        final LoggingContext loggingContext = new LoggingContext("submission", seId);
+    public void submitScripts(
+            @PathParam("seId") String seId,
+            List<Script> scripts,
+            @Suspended final AsyncResponse asyncResponse
+    ) {
+        final DiagnosticContext diagnosticContext = new DiagnosticContext("submission", seId);
 
         METRICS.instrumentStage(() -> {
-            log.debug("{} Processing {} scripts submission", loggingContext, scripts.size());
+            log.debug("{} Processing {} scripts submission", diagnosticContext, scripts.size());
 
-            CompletionStage<Long> stage = null; // <-- non final field, potential concurrent access bug!
-
-            for (int i = 0; i < scripts.size(); i++) {
-                final int scriptIndex = i;
-                final Script script = scripts.get(scriptIndex);
-
-                if (stage == null) {
-                    stage = encryptAndStoreSingleScript(loggingContext, seId, scriptIndex, script);
-                } else {
-                    stage = stage.thenCompose(ignore ->
-                            encryptAndStoreSingleScript(loggingContext, seId, scriptIndex, script));
-                }
-            }
-
-            return stage;
+            return
+            encryptAndStoreAllScripts(diagnosticContext, seId, scripts)
+            .thenCompose(
+                ignore -> scriptStorageClient.numberOfScriptsForSe(seId)
+            );
         })
         .whenComplete((numberOfScripts, e) -> {
             if (e != null) {
                 asyncResponse.resume(e);
             } else {
-                log.debug("{} Request processed", loggingContext);
+                log.debug("{} Request processed", diagnosticContext);
                 asyncResponse.resume(numberOfScripts);
             }
         });
     }
 
-    private CompletionStage<Long> encryptAndStoreSingleScript(final LoggingContext loggingContext, final String seId, final int scriptIndex, final Script script) {
-        log.debug("{} Encrypting script {}", loggingContext, scriptIndex);
+    private CompletionStage<Void> encryptAndStoreAllScripts(
+            final DiagnosticContext diagnosticContext,
+            final String seId,
+            final List<Script> scripts
+    ) {
+        CompletionStage<Void> stage = null; // <- non final field, potential concurrent access bug!
 
-        return secureModuleClient.encrypt(seId, script.getPayload()).thenCompose(encryptedPayload -> {
-            log.debug("{} Storing encrypted script {}", loggingContext, scriptIndex);
-            return scriptStorageClient.storeScript(seId, new Script(encryptedPayload));
-        });
+        for (int i = 0; i < scripts.size(); i++) {
+            final int scriptIndex = i;
+            final Script script = scripts.get(scriptIndex);
+
+            if (stage == null) {
+                stage = encryptAndStoreSingleScript(diagnosticContext, seId, scriptIndex, script);
+            } else {
+                stage = stage.thenCompose(ignore ->
+                        encryptAndStoreSingleScript(diagnosticContext, seId, scriptIndex, script));
+            }
+        }
+
+        return stage;
+    }
+
+    private CompletionStage<Void> encryptAndStoreSingleScript(
+            final DiagnosticContext diagnosticContext,
+            final String seId,
+            final int scriptIndex,
+            final Script script
+    ) {
+        log.debug("{} Encrypting script {}", diagnosticContext, scriptIndex);
+
+        return secureModuleClient
+        .encrypt(seId, script.getPayload())
+        .thenCompose(
+            encryptedPayload -> {
+                log.debug("{} Storing encrypted script {}", diagnosticContext, scriptIndex);
+                return scriptStorageClient.storeScript(seId, new Script(encryptedPayload));
+            }
+        );
     }
 
     @Override

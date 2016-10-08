@@ -6,7 +6,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 
 import java.util.concurrent.CompletionStage;
 
-public class SecureModuleClient {
+public final class SecureModuleClient {
 
     private static final String BASE_URI = System.getenv("SECURE_MODULE_URL") + "/secure-module/encrypt";
 
@@ -31,8 +31,9 @@ public class SecureModuleClient {
         .execute()
         .toCompletableFuture()
         .thenApply(resp -> {
-           if (resp.getStatusCode() != 200) {
-               throw new EncryptionException();
+           if (resp.getStatusCode() < 200 && resp.getStatusCode() > 299) {
+               throw new EncryptionException(
+                       "HTTP request failed with status: " + resp.getStatusCode());
            }
 
            return resp.getResponseBody();

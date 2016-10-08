@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 @Path("se")
@@ -35,11 +36,11 @@ public class ScriptPollingResource extends Application {
         return METRICS.instrument(() -> {
             log.debug("Looking for next script");
 
-            Script nextScript = scriptStorageClient.nextScript(seId);
+            final Optional<Script> nextScript = scriptStorageClient.nextScript(seId);
 
-            if (nextScript != null) {
+            if (nextScript.isPresent()) {
                 log.debug("Script found. Responding back to card");
-                return nextScript;
+                return nextScript.get();
             } else {
                 log.debug("Script was not");
                 throw new NotFoundException();

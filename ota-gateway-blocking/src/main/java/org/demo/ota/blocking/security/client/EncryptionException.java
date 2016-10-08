@@ -1,4 +1,4 @@
-package org.demo.ota.nonblocking.security;
+package org.demo.ota.blocking.security.client;
 
 class EncryptionException extends RuntimeException {
     EncryptionException(String message) {
